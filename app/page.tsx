@@ -59,7 +59,7 @@ export default function Home() {
             {/* <RestaurantList /> */}
           </div>
         </section>
-        <section id="map" className="bg-gray-50 bg-white py-12 md:py-24">
+        <section id="map" className="bg-white py-12 md:py-24">
           <div className="container mx-auto px-4 md:px-10">
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
               <div>
