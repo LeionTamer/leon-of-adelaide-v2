@@ -67,3 +67,5 @@ export default function BaseMap(props: BaseMapProps) {
     </>
   )
 }
+
+// Need to update basemap from https://github.com/Leon-Avanade-Carbonell/deckgl-react-basics/blob/main/components/map/base-map.tsx
