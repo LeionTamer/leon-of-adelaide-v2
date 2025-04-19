@@ -1,9 +1,17 @@
 import { Layer } from 'deck.gl'
 import { atom } from 'jotai'
 
-export type LayerByIDType = {
-  id: string
-  layer: Layer
+export const layerGroups = ['venues', 'cellar door'] as const
+
+export type LayerGroupType = (typeof layerGroups)[number]
+
+interface ILayer extends Layer {
+  layerGroup?: LayerGroupType
 }
 
-export const layersAtom = atom<Record<string, Layer>>({})
+export type LayerByIDType = {
+  id: string
+  layer: ILayer
+}
+
+export const layersAtom = atom<Record<string, ILayer>>({})

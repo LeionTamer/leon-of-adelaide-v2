@@ -1,71 +1,62 @@
 'use client'
 
-import DeckGL from '@deck.gl/react'
-import { MapViewState } from '@deck.gl/core'
-// import { FOOTER_HEIGHT, HEADER_HEIGHT } from '@/helpers/constants'
-import { Map } from 'react-map-gl/maplibre'
+import DeckGL, { DeckGLProps } from '@deck.gl/react'
+import Map from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import {
+  currentViewStateAtom,
+  defaultViewState,
+  mapViewStateAtom,
+} from '@/store/map-store'
+import { layersAtom } from '@/store/layer-store'
+import { MapViewState } from 'deck.gl'
+import { useEffect } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
 
-// typescript
-import { type Layer } from 'deck.gl'
-
-type BaseMapProps = {
+interface IBaseMapProps extends DeckGLProps {
   height?: string
   width?: string
-  layers?: Layer[]
-  longitude?: number
-  latitude?: number
-  zoom?: number
+  customStyle?: Partial<CSSStyleDeclaration>
+  initialViewState?: MapViewState
 }
 
-const INITIAL_VIEW_STATE: MapViewState = {
-  longitude: -122.41669,
-  latitude: 37.7853,
-  zoom: 13,
-}
+export default function BaseMap({
+  height = '100vh',
+  width = '100vw',
+  customStyle = {},
+  initialViewState = defaultViewState,
+  ...props
+}: IBaseMapProps) {
+  const [mapViewState, setMapViewState] = useAtom(mapViewStateAtom)
+  const setCurrentViewState = useSetAtom(currentViewStateAtom)
 
-function MapComponent(props: BaseMapProps) {
-  const {
-    // height = `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})`,
-    height = '100vh',
-    width = '100vw',
-    longitude = -122.41669,
-    latitude = 37.7853,
-    zoom = 13,
-    layers = [] as Layer[],
-  } = props
-  const deckLayers: Layer[] = [...layers]
+  const debounced = useDebouncedCallback((viewState: MapViewState) => {
+    setCurrentViewState(viewState)
+    // console.table(viewState)
+  }, 350)
+
+  const layersMap = useAtomValue(layersAtom)
+  const layers = Object.values(layersMap)
+
+  useEffect(() => {
+    setMapViewState({ ...defaultViewState, ...initialViewState })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    <div
-      className="relative m-0 bg-slate-300 p-0"
-      style={{ height: height, width: width }}
+    <DeckGL
+      initialViewState={mapViewState}
+      onViewStateChange={(e) => debounced(e.viewState)}
+      style={{ ...customStyle, height, width, position: 'relative' }}
+      controller
+      layers={layers}
+      {...props}
     >
-      <DeckGL
-        initialViewState={{ longitude, latitude, zoom } as MapViewState}
-        controller
-        layers={deckLayers}
-        style={{ height: height, width: width }}
-      >
-        <Map
-          initialViewState={INITIAL_VIEW_STATE}
-          mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-          // mapStyle="https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
-          style={{ position: 'fixed', width: width, height: height }}
-        />
-      </DeckGL>
-    </div>
+      <Map
+        id="base-map"
+        mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+      />
+    </DeckGL>
   )
 }
-
-export default function BaseMap(props: BaseMapProps) {
-  return (
-    <>
-      <div>
-        <MapComponent {...props} />
-      </div>
-    </>
-  )
-}
-
-// Need to update basemap from https://github.com/Leon-Avanade-Carbonell/deckgl-react-basics/blob/main/components/map/base-map.tsx
