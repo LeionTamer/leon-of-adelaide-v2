@@ -33,7 +33,6 @@ export default function BaseMap({
 
   const debounced = useDebouncedCallback((viewState: MapViewState) => {
     setCurrentViewState(viewState)
-    // console.table(viewState)
   }, 350)
 
   const layersMap = useAtomValue(layersAtom)
