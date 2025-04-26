@@ -1,12 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { HTMLProps, useState } from 'react'
 import { Command, CommandInput, CommandList } from '../ui/command'
 
-export default function SearchPlace() {
+export default function SearchPlace({
+  className,
+}: {
+  className?: HTMLProps<HTMLElement>['className']
+}) {
   const [text, setText] = useState('')
   return (
-    <Command value={text}>
+    <Command value={text} className={`mx-auto max-w-5xl ` + className}>
       <CommandInput
         placeholder="This is a test"
         value={text}

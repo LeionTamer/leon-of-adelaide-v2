@@ -1,11 +1,15 @@
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import Footer from './_components/footer'
+import SearchPlace from '@/components/common/search-place'
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
+        <section className="relative">
+          <SearchPlace className="max-w-7xl" />
+        </section>
         <section className="relative">
           <div className="absolute inset-0 z-10 bg-gradient-to-r from-purple-900/80 to-orange-600/80" />
           <div
